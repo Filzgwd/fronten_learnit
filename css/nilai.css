@@ -1,0 +1,353 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4f6fa;
+  color: #111827;
+}
+
+/* LAYOUT */
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* MAIN */
+
+.main-content {
+  flex: 1;
+  padding: 32px 40px;
+  background: #f8fafc;
+}
+
+/* TOPBAR */
+
+.nilai-topbar {
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 20px;
+}
+
+.nilai-topbar h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.nilai-topbar p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* HERO */
+
+.nilai-hero-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nilai-hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.nilai-hero-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.nilai-hero-text p {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-left: 4px;
+}
+
+/* GRID */
+
+.nilai-content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* CARD */
+
+.nilai-quiz-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nilai-quiz-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.nilai-card-body {
+  padding: 24px;
+  flex: 1;
+}
+
+.nilai-card-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.nilai-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.nilai-card-icon.unlocked {
+  background: #2563eb;
+  color: white;
+}
+
+.nilai-card-icon.locked {
+  background: #e2e8f0;
+  color: #94a3b8;
+}
+
+.nilai-card-title-area h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.nilai-card-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nilai-card-badge.unlocked {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.nilai-card-badge.locked {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* PROGRESS */
+
+.nilai-progress-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.nilai-progress-bar-bg {
+  flex: 1;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.nilai-progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.nilai-progress-bar-fill.unlocked {
+  background: #2563eb;
+}
+
+.nilai-progress-bar-fill.locked {
+  background: #cbd5e1;
+}
+
+.nilai-progress-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  width: 40px;
+  text-align: right;
+}
+
+/* SCORE */
+
+.nilai-score-section {
+  margin-bottom: 24px;
+}
+
+.nilai-score-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.nilai-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nilai-score-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.nilai-score-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.nilai-score-status:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.nilai-score-status.lulus {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.nilai-score-status.tidak-lulus {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* ACTION BUTTON */
+
+.nilai-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nilai-action-btn.unlocked {
+  background: #2563eb;
+  color: white;
+}
+
+.nilai-action-btn.unlocked:hover {
+  background: #1d4ed8;
+}
+
+.nilai-action-btn.locked {
+  background: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.nilai-action-btn-icon-wrapper {
+  background: white;
+  color: #2563eb;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* FOOTER */
+
+.nilai-card-footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nilai-card-footer.unlocked {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.nilai-card-footer.locked {
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px) {
+  .nilai-content-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width:768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  .main-content {
+    padding: 24px;
+  }
+  .nilai-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .nilai-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

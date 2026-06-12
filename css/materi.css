@@ -1,0 +1,1243 @@
+/* =========================================
+   RESET
+========================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
+}
+
+body{
+  background:#eef3fb;
+}
+
+/* =========================================
+   LAYOUT
+========================================= */
+
+.dashboard-container{
+  display:flex;
+  min-height:100vh;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar{
+  width:260px;
+  background:linear-gradient(180deg,#10204d,#304cb7);
+  padding:20px 15px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.sidebar-logo{
+  background:rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:30px;
+}
+
+.logo-box{
+  width:45px;
+  height:45px;
+  border-radius:10px;
+  background:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  overflow:hidden;
+}
+
+.logo-img{
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
+
+.logo-text{
+  color:white;
+  font-size:28px;
+  font-weight:700;
+}
+
+.logo-text span{
+  color:#38bdf8;
+}
+
+/* =========================================
+   MENU
+========================================= */
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar{
+  width:260px;
+  background:linear-gradient(180deg,#10204d,#304cb7);
+  padding:20px 15px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.sidebar-logo{
+  background:rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:35px;
+}
+
+.logo-box{
+  width:50px;
+  height:50px;
+  border-radius:12px;
+  background:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  overflow:hidden;
+}
+
+.logo-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.logo-text{
+  color:white;
+  font-size:34px;
+  font-weight:700;
+  line-height:1;
+}
+
+.logo-text span{
+  color:#38bdf8;
+}
+
+/* =========================================
+   MENU
+========================================= */
+
+.sidebar-menu{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:15px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  color:white;
+  transition:.3s;
+  font-size:18px;
+}
+
+.menu-item i{
+  width:22px;
+  font-size:18px;
+}
+
+.menu-item:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.menu-item.active{
+  background:rgba(255,255,255,.18);
+  font-weight:600;
+}
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.logout-area{
+  margin-top:auto;
+}
+
+.logout-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  background:rgba(255,255,255,.12);
+  color:white;
+  text-decoration:none;
+  padding:14px;
+  border-radius:12px;
+  transition:.3s;
+}
+
+.logout-btn:hover{
+  background:rgba(255,255,255,.2);
+}
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.logout-area{
+  margin-top:auto;
+}
+
+.logout-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  background:rgba(255,255,255,.12);
+  color:white;
+  text-decoration:none;
+  padding:14px;
+  border-radius:10px;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.main-content{
+  flex:1;
+  padding:30px 36px;
+}
+
+/* =========================================
+   TOPBAR
+========================================= */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:24px;
+  margin-bottom:26px;
+}
+
+.topbar h1{
+  font-size:36px;
+  line-height:1.1;
+  color:#111827;
+  font-weight:700;
+}
+
+.topbar p{
+  color:#6b7280;
+  margin-top:8px;
+  font-size:14px;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.search-box{
+  width:280px;
+  background:white;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  padding:10px 14px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.search-box i{
+  color:#9ca3af;
+}
+
+.search-box input{
+  border:none;
+  outline:none;
+  width:100%;
+  font-size:14px;
+  background:transparent;
+}
+
+/* =========================================
+   GRID
+========================================= */
+
+.materi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.materi-card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  transition:.3s;
+  cursor:pointer;
+}
+
+.learning-path-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:315px;
+  padding:16px;
+  color:inherit;
+  text-decoration:none;
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+  overflow:hidden;
+}
+
+#learningPathList{
+  grid-template-columns:repeat(3,minmax(220px,1fr));
+  gap:22px 24px;
+  align-items:stretch;
+}
+
+#learningPathList .materi-image{
+  height:150px;
+  margin-bottom:14px;
+  border-radius:14px;
+  box-shadow:inset 0 0 0 1px rgba(15,23,42,.08);
+}
+
+#learningPathList .path-card-body{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+}
+
+#learningPathList .materi-card h3{
+  padding-right:46px;
+  font-size:18px;
+  line-height:1.25;
+  margin-bottom:8px;
+}
+
+#learningPathList .materi-card p{
+  font-size:14px;
+  line-height:1.55;
+}
+
+#learningPathList .path-number{
+  position:absolute;
+  right:16px;
+  top:16px;
+  z-index:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:#10204d;
+  color:white;
+  font-size:15px;
+  font-weight:800;
+  box-shadow:0 10px 20px rgba(16,32,77,.22);
+}
+
+#learningPathList .learning-path-card:hover{
+  transform:translateY(-6px);
+  border-color:#bfdbfe;
+  box-shadow:0 18px 36px rgba(15,23,42,.13);
+}
+
+#learningPathList .learning-path-card:hover .path-number{
+  background:#2563eb;
+}
+
+.materi-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.materi-empty {
+  grid-column:1/-1;
+  padding:32px 24px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  color:#475569;
+  text-align:center;
+  font-size:16px;
+}
+
+/* =========================================
+   IMAGE
+========================================= */
+
+.materi-image{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  border-radius:16px;
+  margin-bottom:18px;
+}
+
+/* =========================================
+   TEXT
+========================================= */
+
+.materi-card h3{
+  font-size:24px;
+  margin-bottom:12px;
+  color:#111827;
+}
+
+.materi-card p{
+  color:#6b7280;
+  line-height:1.7;
+}
+
+#learningPathList .materi-image{
+  height:150px;
+  margin-bottom:14px;
+}
+
+#learningPathList .materi-card h3{
+  padding-right:46px;
+  font-size:18px;
+  line-height:1.25;
+  margin-bottom:8px;
+}
+
+#learningPathList .materi-card p{
+  font-size:14px;
+  line-height:1.55;
+}
+
+#learningPathList .learning-path-card:hover{
+  transform:translateY(-6px);
+  border-color:#bfdbfe;
+  box-shadow:0 18px 36px rgba(15,23,42,.13);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:900px){
+
+  #learningPathList{
+    grid-template-columns:repeat(2,minmax(220px,1fr));
+  }
+
+  .sidebar{
+    width:90px;
+  }
+
+  .logo-text,
+  .menu-item span,
+  .logout-btn span{
+    display:none;
+  }
+
+  .menu-item{
+    justify-content:center;
+  }
+
+}
+
+@media(max-width:700px){
+
+  .dashboard-container{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    flex-direction:row;
+    overflow:auto;
+  }
+
+  .sidebar-menu{
+    flex-direction:row;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:22px;
+  }
+
+  .search-box{
+    width:100%;
+  }
+
+  #learningPathList{
+    grid-template-columns:1fr;
+  }
+
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.sidebar-logo{
+  background:rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:30px;
+}
+
+.logo-box{
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+}
+
+.sidebar-logo h2{
+  color:white;
+  font-size:28px;
+  font-weight:700;
+}
+
+/* =========================================
+   MENU
+========================================= */
+
+.sidebar-menu{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+  color: white;
+
+  font-size: 16px;
+
+  transition: .3s;
+}
+
+.menu-item i{
+  width: 20px;
+}
+
+.menu-item:hover{
+  background: rgba(255,255,255,.12);
+}
+
+.menu-item.active{
+  background: rgba(255,255,255,.15);
+}
+.center-text{
+  text-align:center;
+}
+
+/* CONSISTENT LEARNIT SIDEBAR */
+.sidebar{
+  width:260px;
+  background:linear-gradient(180deg,#10204d,#304cb7);
+  padding:20px 15px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.sidebar-logo{
+  background:rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:35px;
+}
+
+.logo-box{
+  width:50px;
+  height:50px;
+  border-radius:12px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.logo-img,
+.logo-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.logo-text{
+  color:white;
+  font-size:34px;
+  font-weight:700;
+  line-height:1;
+}
+
+.logo-text span{
+  color:#38bdf8;
+}
+
+.sidebar-menu{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:0;
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:15px 18px;
+  border-radius:14px;
+  color:white;
+  font-size:18px;
+  transform:none;
+}
+
+.menu-item i{
+  width:22px;
+  font-size:18px;
+}
+
+.menu-item:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.menu-item.active{
+  background:rgba(255,255,255,.18);
+  font-weight:600;
+}
+
+.logout-area{
+  margin-top:auto;
+  padding-top:20px;
+}
+
+.logout-btn{
+  border-radius:12px;
+  background:rgba(255,255,255,.12);
+}
+
+@media(max-width:700px){
+  .dashboard-container{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+  }
+}
+
+/* FINAL SIDEBAR MATCH: MATERI & NILAI */
+.sidebar{
+  width:260px;
+  min-height:100vh;
+  background:linear-gradient(180deg,#10204d,#304cb7);
+  color:white;
+  padding:20px 15px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.sidebar-logo{
+  background:rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:35px;
+}
+
+.logo-box{
+  width:50px;
+  height:50px;
+  border-radius:12px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.logo-img,
+.logo-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.logo-text{
+  display:block;
+  color:white;
+  font-size:34px;
+  font-weight:700;
+  line-height:1;
+}
+
+.logo-text span{
+  color:#38bdf8;
+}
+
+.sidebar-menu{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:0;
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:16px;
+  padding:15px 18px;
+  border-radius:14px;
+  color:white;
+  text-decoration:none;
+  font-size:18px;
+  transform:none;
+}
+
+.menu-item span,
+.logout-btn span{
+  display:inline;
+}
+
+.menu-item i{
+  width:22px;
+  font-size:18px;
+}
+
+.menu-item:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.menu-item.active{
+  background:rgba(255,255,255,.18);
+  font-weight:600;
+}
+
+.logout-area{
+  margin-top:auto;
+  padding-top:20px;
+}
+
+.logout-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(255,255,255,.12);
+  color:white;
+  text-decoration:none;
+}
+
+@media(max-width:700px){
+  .dashboard-container{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    min-height:auto;
+    flex-direction:column;
+  }
+
+  .sidebar-menu{
+    flex-direction:column;
+  }
+}
+
+/* Keep the LearnIT logo text the same size on every page. */
+.sidebar-logo .logo-text{
+  font-size:34px;
+}
+
+/* Detail materi page */
+.detail-materi-page{
+  background:#eef3fb;
+}
+
+.detail-materi-page .main-content{
+  padding:0;
+  background:#eef3fb;
+}
+
+.detail-materi-page .materi-header{
+  min-height:104px;
+  max-width:none;
+  padding:30px 34px 22px;
+  background:#fff;
+  border-bottom:1px solid #d7dce7;
+}
+
+.detail-materi-page .materi-header h1{
+  font-size:28px;
+  line-height:1.1;
+  margin-bottom:10px;
+  color:#0f1117;
+  font-weight:800;
+}
+
+.detail-materi-page .materi-header p{
+  color:#8b93a2;
+  font-size:13px;
+  line-height:1.45;
+}
+
+.detail-materi-page .materi-search{
+  width:205px;
+  height:33px;
+  margin-top:5px;
+  border-radius:6px;
+  background:#f8fafc;
+}
+
+.detail-materi-page .materi-search input{
+  font-size:11px;
+}
+
+.detail-materi-page .materi-list{
+  max-width:890px;
+  margin:0 auto;
+  padding:28px 32px 54px;
+  grid-template-columns:repeat(3, minmax(190px, 1fr));
+  gap:30px 34px;
+}
+
+.detail-materi-page .materi-item{
+  min-height:290px;
+  padding:14px 14px 13px;
+  border-radius:16px;
+  border:1px solid #e1e7f0;
+  background:#fff;
+  text-align:center;
+  box-shadow:0 3px 8px rgba(15,23,42,.14);
+}
+
+.detail-materi-page .materi-item:hover{
+  transform:translateY(-4px);
+  border-color:#cbd5e1;
+  box-shadow:0 14px 24px rgba(15,23,42,.12);
+}
+
+.detail-materi-page .materi-item img{
+  height:116px;
+  margin-bottom:14px;
+  border-radius:12px;
+  object-fit:cover;
+}
+
+.detail-materi-page .materi-item h3{
+  margin-bottom:8px;
+  color:#15151a;
+  font-size:20px;
+  line-height:1.15;
+  font-weight:800;
+}
+
+.detail-materi-page .materi-item p{
+  max-width:185px;
+  margin:0 auto 14px;
+  color:#8b93a2;
+  font-size:11px;
+  line-height:1.35;
+}
+
+.detail-materi-page .learn-btn{
+  width:100%;
+  min-height:33px;
+  border-radius:6px;
+  background:#2462d9;
+  font-size:11px;
+  font-weight:800;
+}
+
+.detail-materi-page .learn-btn:hover{
+  background:#1d4ed8;
+}
+
+@media(max-width:980px){
+  .detail-materi-page .materi-list{
+    grid-template-columns:repeat(2, minmax(220px, 1fr));
+    max-width:640px;
+  }
+}
+
+@media(max-width:620px){
+  .detail-materi-page .materi-header{
+    flex-direction:column;
+    padding:24px;
+  }
+
+  .detail-materi-page .materi-search{
+    width:100%;
+  }
+
+  .detail-materi-page .materi-list{
+    grid-template-columns:1fr;
+    max-width:360px;
+    padding:24px;
+  }
+}
+
+/* Learning path page - high fidelity mockup */
+.learning-flow-page{
+  background:#eef3fb;
+  color:#121212;
+}
+
+.learning-flow-page .dashboard-container{
+  min-height:100vh;
+  background:#eef3fb;
+}
+
+.learning-flow-page .main-content{
+  flex:1;
+  padding:0;
+  overflow:hidden;
+  background:#eef3fb;
+}
+
+.learning-flow-page .topbar{
+  min-height:98px;
+  margin:0;
+  padding:28px 56px 22px 18px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:28px;
+  background:#fff;
+  border-bottom:1px solid #d7dce7;
+}
+
+.learning-flow-page .topbar h1{
+  margin:0;
+  color:#0c0c10;
+  font-size:28px;
+  line-height:1.08;
+  font-weight:800;
+}
+
+.learning-flow-page .topbar p{
+  margin-top:12px;
+  color:#8a8f9b;
+  font-size:11px;
+  line-height:1.4;
+}
+
+.learning-flow-page .search-box{
+  width:205px;
+  height:31px;
+  margin-top:6px;
+  padding:0 10px;
+  gap:8px;
+  border:1px solid #b9c0cc;
+  border-radius:6px;
+  background:#f8fafc;
+}
+
+.learning-flow-page .search-box i{
+  font-size:12px;
+}
+
+.learning-flow-page .search-box input{
+  font-size:11px;
+  color:#475569;
+}
+
+.learning-flow-page .materi-grid{
+  width:100%;
+  padding:28px 50px 46px;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(230px, 1fr));
+  gap:24px 24px;
+  align-items:start;
+}
+
+.learning-flow-page #learningPathList{
+  grid-template-columns:repeat(3, minmax(230px, 1fr));
+  gap:24px 24px;
+}
+
+.learning-flow-page .learning-path-card,
+.learning-flow-page #learningPathList .learning-path-card{
+  width:100%;
+  min-height:285px;
+  padding:16px;
+  border:1px solid #e0e5ef;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 2px 7px rgba(15,23,42,.15);
+}
+
+.learning-flow-page #learningPathList .materi-image{
+  height:160px;
+  margin-bottom:14px;
+  border-radius:12px;
+  object-fit:cover;
+  box-shadow:none;
+}
+
+.learning-flow-page #learningPathList .materi-card h3{
+  padding-right:0;
+  margin-bottom:8px;
+  color:#15151a;
+  font-size:15px;
+  line-height:1.2;
+  font-weight:800;
+}
+
+.learning-flow-page #learningPathList .materi-card p{
+  color:#898f9a;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.learning-flow-page #learningPathList .learning-path-card:hover{
+  transform:translateY(-4px);
+  border-color:#cbd5e1;
+  box-shadow:0 12px 24px rgba(15,23,42,.13);
+}
+
+.learning-flow-page .materi-empty{
+  max-width:655px;
+  font-size:13px;
+}
+
+@media(max-width:900px){
+  .learning-flow-page .topbar{
+    padding:24px 24px 20px;
+  }
+
+  .learning-flow-page .materi-grid,
+  .learning-flow-page #learningPathList{
+    grid-template-columns:repeat(2, minmax(220px, 1fr));
+    padding:22px 24px 40px;
+  }
+}
+
+@media(max-width:620px){
+  .learning-flow-page .topbar{
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .learning-flow-page .search-box{
+    width:100%;
+  }
+
+  .learning-flow-page .materi-grid,
+  .learning-flow-page #learningPathList{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Final detail-materi layout override */
+body.detail-materi-page .main-content{
+  padding:0;
+  background:#eef3fb;
+}
+
+body.detail-materi-page .materi-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  width:100%;
+  min-height:106px;
+  margin:0;
+  padding:30px 34px 22px;
+  background:#fff;
+  border-bottom:1px solid #d7dce7;
+}
+
+body.detail-materi-page .materi-header h1{
+  margin:0 0 10px;
+  color:#111827;
+  font-size:28px;
+  line-height:1.08;
+  font-weight:800;
+}
+
+body.detail-materi-page .materi-header p{
+  margin:0;
+  color:#8b93a2;
+  font-size:13px;
+  line-height:1.45;
+}
+
+body.detail-materi-page .materi-search{
+  width:205px;
+  height:33px;
+  margin-top:5px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #b9c0cc;
+  border-radius:6px;
+  background:#f8fafc;
+  color:#9ca3af;
+}
+
+body.detail-materi-page .materi-search i{
+  width:auto;
+  font-size:11px;
+}
+
+body.detail-materi-page .materi-search input{
+  width:100%;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#475569;
+  font-size:11px;
+}
+
+body.detail-materi-page #detailMateriList.materi-list{
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  padding:30px 36px 52px;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(250px, 1fr));
+  justify-content:center;
+  align-items:start;
+  gap:28px 32px;
+}
+
+body.detail-materi-page #detailMateriList .materi-item{
+  width:100%;
+  min-height:315px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  text-align:center;
+  background:#fff;
+  border:1px solid #e1e7f0;
+  border-radius:16px;
+  box-shadow:0 3px 8px rgba(15,23,42,.14);
+}
+
+body.detail-materi-page #detailMateriList .materi-item img{
+  display:block;
+  width:100%;
+  height:140px;
+  margin:0 0 15px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+body.detail-materi-page #detailMateriList .materi-item h3{
+  margin:0 0 8px;
+  color:#15151a;
+  font-size:19px;
+  line-height:1.15;
+  font-weight:800;
+}
+
+body.detail-materi-page #detailMateriList .materi-item p{
+  flex:1;
+  max-width:220px;
+  margin:0 auto 14px;
+  color:#8b93a2;
+  font-size:12px;
+  line-height:1.4;
+}
+
+body.detail-materi-page #detailMateriList .learn-btn{
+  width:100%;
+  min-height:36px;
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  background:#2462d9;
+  color:#fff;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+}
+
+@media(max-width:980px){
+  body.detail-materi-page #detailMateriList.materi-list{
+    grid-template-columns:repeat(2, minmax(230px, 1fr));
+    max-width:720px;
+  }
+}
+
+@media(max-width:620px){
+  body.detail-materi-page .materi-header{
+    flex-direction:column;
+    padding:24px;
+  }
+
+  body.detail-materi-page .materi-search{
+    width:100%;
+  }
+
+  body.detail-materi-page #detailMateriList.materi-list{
+    grid-template-columns:1fr;
+    max-width:360px;
+  }
+
+  body.detail-materi-page #detailMateriList .materi-item{
+    width:100%;
+  }
+}
