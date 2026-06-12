@@ -43,14 +43,18 @@ function NilaiContent() {
       // Get progress percentage using pathStats
       const progressPercent = pathStats[pathKey]?.pathPercent || 0;
 
+      const isUnlocked = allMaterialsRead;
+
       // Quiz score
       const scoreData = quizScores[pathKey];
       const score = scoreData ? Number(scoreData.score || 0) : null;
-      const scoreDisplay = scoreData ? `${score}/100` : "0/0";
+      
+      // If locked, hide score and badge
+      const scoreDisplay = isUnlocked ? (scoreData ? `${score}/100` : "0/100") : "- / 100";
 
       // Status badge
       let statusBadge = null;
-      if (scoreData) {
+      if (isUnlocked && scoreData) {
         if (score >= 70) {
           statusBadge = { text: "Lulus", className: "lulus", icon: "fa-solid fa-circle-check" };
         } else {
@@ -82,7 +86,7 @@ function NilaiContent() {
 
         <div className="nilai-hero-card">
           <div className="nilai-hero-icon">
-            <i className="fa-solid fa-chart-line"></i>
+            <img src="/assets/img/logo nilai.png" alt="Logo Nilai" style={{ width: "100%", height: "100%", objectFit: "contain", transform: "scale(1.8)" }} />
           </div>
           <div className="nilai-hero-text">
             <span className="nilai-hero-badge">Hai, {username}!</span>

@@ -374,30 +374,33 @@ form input:-moz-autofill {
 }
 
 .check-icon {
-  width: 90px;
-  height: 90px;
-  border: 4px solid #39c58d;
+  width: 80px;
+  height: 80px;
+  border: 4px solid #22c55e;
   border-radius: 50%;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 45px;
-  color: #39c58d;
-  font-weight: bold;
 }
 
 .popup-card h2 {
-  margin-bottom: 10px;
-  font-size: 30px;
+  margin-bottom: 8px !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  text-align: center !important;
 }
 
 .popup-card p {
-  color: #666;
-  margin-bottom: 25px;
+  color: #4b5563 !important;
+  margin-bottom: 0 !important;
+  font-size: 15px !important;
+  text-align: center !important;
 }
 
 .popup-card button {
+  margin-top: 24px;
   padding: 12px 30px;
   border: none;
   background: #39c58d;

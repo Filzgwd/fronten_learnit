@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { materialApi } from "../../features/materials/materialApi";
+import ConfirmDialog from "../../features/todos/ConfirmDialog";
 
 const initialMaterial = {
   name: "",
@@ -88,6 +89,7 @@ export default function AdminMateriPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(initialMaterial);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, materialId: null });
 
   useEffect(() => {
     const loaded = materialApi.getLocalMaterials();
@@ -174,11 +176,16 @@ export default function AdminMateriPage() {
   };
 
   const handleDeleteMaterial = (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus materi ini?")) {
-      const updated = materials.filter((item) => item.id !== id);
-      setMaterials(updated);
-      materialApi.saveAllMaterials(updated.map(mapAdminToUser));
-    }
+    setConfirmDelete({ isOpen: true, materialId: id });
+  };
+
+  const confirmDeleteAction = () => {
+    const { materialId } = confirmDelete;
+    if (!materialId) return;
+    const updated = materials.filter((item) => item.id !== materialId);
+    setMaterials(updated);
+    materialApi.saveAllMaterials(updated.map(mapAdminToUser));
+    setConfirmDelete({ isOpen: false, materialId: null });
   };
 
   const handleAddBlock = () => {
@@ -486,6 +493,14 @@ export default function AdminMateriPage() {
               </table>
             </div>
           </section>
+
+          <ConfirmDialog
+            isOpen={confirmDelete.isOpen}
+            title="Hapus Materi"
+            message="Apakah Anda yakin ingin menghapus materi ini? Seluruh data di dalamnya akan terhapus dan tidak dapat dikembalikan."
+            onConfirm={confirmDeleteAction}
+            onCancel={() => setConfirmDelete({ isOpen: false, materialId: null })}
+          />
         </>
       )}
     </section>

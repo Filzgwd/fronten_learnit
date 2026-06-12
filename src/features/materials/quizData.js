@@ -299,11 +299,34 @@ export function getQuizForPath(pathKey) {
   return defaultQuizData[pathKey] || null;
 }
 
+// Legacy key kept for fallback if needed
+
+// Helper to get user ID
+function getCurrentUserId() {
+  try {
+    const localUser = JSON.parse(localStorage.getItem("localCurrentUser"));
+    if (localUser?.id) return localUser.id;
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (payload?.id || payload?.sub) return String(payload.id || payload.sub);
+    }
+  } catch {
+    // ignore
+  }
+  return "guest";
+}
+
+function getQuizScoreKey() {
+  return `quizScores_${getCurrentUserId()}`;
+}
+
 export function saveQuizScore(pathKey, score, answers = null) {
   try {
-    const existing = JSON.parse(localStorage.getItem(QUIZ_SCORE_KEY) || "{}");
+    const key = getQuizScoreKey();
+    const existing = JSON.parse(localStorage.getItem(key) || "{}");
     existing[pathKey] = { score, date: new Date().toISOString(), answers };
-    localStorage.setItem(QUIZ_SCORE_KEY, JSON.stringify(existing));
+    localStorage.setItem(key, JSON.stringify(existing));
   } catch {
     // ignore
   }
@@ -311,7 +334,8 @@ export function saveQuizScore(pathKey, score, answers = null) {
 
 export function getQuizScores() {
   try {
-    return JSON.parse(localStorage.getItem(QUIZ_SCORE_KEY) || "{}");
+    const key = getQuizScoreKey();
+    return JSON.parse(localStorage.getItem(key) || "{}");
   } catch {
     return {};
   }

@@ -32,15 +32,15 @@ export default function ConfirmDialog({
         .dialog-overlay {
           position: fixed; inset: 0; z-index: 50;
           display: flex; align-items: center; justify-content: center;
-          background: rgba(10,10,20,0.78);
-          backdrop-filter: blur(6px);
+          background: rgba(0,0,0,0.4);
+          backdrop-filter: blur(4px);
         }
         .dialog-box {
           width: 100%; max-width: 380px; margin: 0 16px;
-          background: rgba(15,15,28,0.98);
-          border: 1px solid rgba(255,255,255,0.08);
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           border-radius: 18px;
-          box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
           overflow: hidden;
           animation: dialogPop 0.2s cubic-bezier(0.34,1.56,0.64,1);
           font-family: 'DM Sans', sans-serif;
@@ -49,35 +49,36 @@ export default function ConfirmDialog({
         .dialog-icon-wrap {
           width: 42px; height: 42px;
           border-radius: 50%;
-          background: rgba(239,68,68,0.12);
+          background: #fee2e2;
           display: flex; align-items: center; justify-content: center;
           margin-bottom: 14px;
         }
         .dialog-title {
-          font-size: 15px; font-weight: 600; color: #f1f0ff;
+          font-size: 16px; font-weight: 700; color: #111827;
           margin-bottom: 6px;
         }
-        .dialog-message { font-size: 13.5px; color: #6b7280; line-height: 1.5; }
+        .dialog-message { font-size: 14px; color: #4b5563; line-height: 1.5; }
         .dialog-footer {
           display: flex; gap: 10px;
           padding: 16px 24px;
-          border-top: 1px solid rgba(255,255,255,0.05);
+          border-top: 1px solid #f3f4f6;
+          background: #f9fafb;
         }
         .dialog-btn {
           flex: 1; padding: 11px;
           border-radius: 10px; border: none;
           font-family: 'DM Sans', sans-serif;
-          font-size: 14px; font-weight: 500;
+          font-size: 14px; font-weight: 600;
           cursor: pointer;
-          transition: opacity 0.2s, transform 0.15s;
+          transition: all 0.2s;
         }
-        .dialog-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .dialog-btn:hover { transform: translateY(-1px); }
         .dialog-btn.cancel {
-          background: rgba(255,255,255,0.05);
-          color: #9ca3af;
-          border: 1px solid rgba(255,255,255,0.07);
+          background: #ffffff;
+          color: #374151;
+          border: 1px solid #d1d5db;
         }
-        .dialog-btn.cancel:hover { background: rgba(255,255,255,0.09); }
+        .dialog-btn.cancel:hover { background: #f3f4f6; }
         .dialog-btn.danger {
           background: linear-gradient(135deg, #ef4444, #dc2626);
           color: #fff;

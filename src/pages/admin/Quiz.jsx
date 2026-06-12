@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ConfirmDialog from "../../features/todos/ConfirmDialog";
 import { QUIZ_STORAGE_KEY } from "../../features/materials/quizData";
 
 const initialQuestion = {
@@ -86,6 +87,7 @@ export default function AdminQuizPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentQuiz, setCurrentQuiz] = useState(initialQuiz);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, quizId: null });
 
   useEffect(() => {
     const payload = {};
@@ -183,7 +185,14 @@ export default function AdminQuizPage() {
   };
 
   const handleDeleteQuiz = (quizId) => {
+    setConfirmDelete({ isOpen: true, quizId });
+  };
+
+  const confirmDeleteAction = () => {
+    const { quizId } = confirmDelete;
+    if (!quizId) return;
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+    setConfirmDelete({ isOpen: false, quizId: null });
   };
 
   const handleSaveQuiz = (event) => {
@@ -446,6 +455,14 @@ export default function AdminQuizPage() {
           </section>
         </>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Kuis"
+        message="Apakah Anda yakin ingin menghapus kuis ini? Seluruh data soal di dalamnya akan terhapus secara permanen."
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, quizId: null })}
+      />
     </section>
   );
 }

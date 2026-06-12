@@ -52,6 +52,10 @@ export default function Signup() {
         setSuccessDestination("/signin");
       }
       setShowSuccessPopup(true);
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+        navigate(res?.data?.token ? "/dashboard" : "/signin", { state: { forceShow: true } });
+      }, 2000);
     } catch (err) {
       const res = err.response?.data;
       if (Array.isArray(res)) {
@@ -135,7 +139,11 @@ export default function Signup() {
 
         <div className={`success-popup ${showSuccessPopup ? "show" : ""}`}>
           <div className="popup-card">
-            <div className="check-icon">✓</div>
+            <div className="check-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
             <h2>Berhasil</h2>
             <p>Data anda telah berhasil disimpan</p>
             <button

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import ConfirmDialog from "../../features/todos/ConfirmDialog";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, userId: null });
 
   useEffect(() => {
     try {
@@ -28,13 +30,18 @@ export default function AdminUsersPage() {
       alert("Administrator tidak dapat dihapus!");
       return;
     }
-    if (window.confirm("Apakah Anda yakin ingin menghapus pengguna ini?")) {
-      const localUsers = JSON.parse(localStorage.getItem("localUsers")) || [];
-      const updatedLocalUsers = localUsers.filter((u) => u.id !== userId);
-      localStorage.setItem("localUsers", JSON.stringify(updatedLocalUsers));
-      
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
-    }
+    setConfirmDelete({ isOpen: true, userId });
+  };
+
+  const confirmDeleteAction = () => {
+    const { userId } = confirmDelete;
+    if (!userId) return;
+    const localUsers = JSON.parse(localStorage.getItem("localUsers")) || [];
+    const updatedLocalUsers = localUsers.filter((u) => u.id !== userId);
+    localStorage.setItem("localUsers", JSON.stringify(updatedLocalUsers));
+    
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+    setConfirmDelete({ isOpen: false, userId: null });
   };
 
   const filteredUsers = users.filter((user) => 
@@ -106,6 +113,14 @@ export default function AdminUsersPage() {
           </table>
         </div>
       </section>
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Pengguna"
+        message="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan."
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, userId: null })}
+      />
     </section>
   );
 }
