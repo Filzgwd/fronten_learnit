@@ -304,6 +304,7 @@ export default function Signin() {
           <button
             type="button"
             className="auth-google-btn"
+            onClick={() => handleGoogleLogin()}
           >
             <img src="/assets/img/google.svg" alt="Google" style={{ width: "20px", height: "20px" }} /> Masuk dengan Google
           </button>
