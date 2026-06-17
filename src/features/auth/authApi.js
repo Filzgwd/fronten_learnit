@@ -97,20 +97,6 @@ export const authApi = {
   },
 
   signin: async (data) => {
-    // Admin uses local auth (hardcoded, not in backend)
-    if (data.email === "admin@gmail.com" && data.password === "Admin123!") {
-      const adminUser = {
-        id: "admin_1",
-        name: "Admin",
-        namaLengkap: "Admin",
-        email: "admin@gmail.com",
-        role: "admin",
-      };
-      const token = makeLocalToken(adminUser);
-      localStorage.setItem(LOCAL_CURRENT_USER_KEY, JSON.stringify(adminUser));
-      return { data: { token, user: adminUser } };
-    }
-
     try {
       const res = await api.post("/auth/login", data);
       // Normalize role: backend uses "student", we treat it as "user"
@@ -121,23 +107,6 @@ export const authApi = {
     } catch (err) {
       // Backend unavailable → check local users
       if (!err.response) {
-        // Check hardcoded admin
-        if (
-          data.email === "admin@gmail.com" &&
-          data.password === "Admin123!"
-        ) {
-          const adminUser = {
-            id: "admin_1",
-            name: "Admin",
-            namaLengkap: "Admin",
-            email: "admin@gmail.com",
-            role: "admin",
-          };
-          const token = makeLocalToken(adminUser);
-          localStorage.setItem(LOCAL_CURRENT_USER_KEY, JSON.stringify(adminUser));
-          return { data: { token, user: adminUser } };
-        }
-
         const users = getLocalUsers();
         const found = users.find(
           (u) =>

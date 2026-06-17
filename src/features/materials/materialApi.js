@@ -84,6 +84,18 @@ export const materialApi = {
 
   getLocalMaterials: () => getLocalMaterials(),
 
+  createMaterial: async (data, signal) => {
+    return await request({ method: "post", url: "/materials", data, signal });
+  },
+
+  updateMaterial: async (id, data, signal) => {
+    return await request({ method: "put", url: `/materials/${id}`, data, signal });
+  },
+
+  deleteMaterial: async (id, signal) => {
+    return await request({ method: "delete", url: `/materials/${id}`, signal });
+  },
+
   saveAllMaterials: (materials) => {
     localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(materials));
     return materials;

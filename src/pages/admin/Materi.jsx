@@ -92,8 +92,13 @@ export default function AdminMateriPage() {
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, materialId: null });
 
   useEffect(() => {
-    const loaded = materialApi.getLocalMaterials();
-    setMaterials(loaded.map(mapUserToAdmin));
+    const fetchMaterials = async () => {
+      const res = await materialApi.getAll();
+      if (res.data) {
+        setMaterials(res.data.map(mapUserToAdmin));
+      }
+    };
+    fetchMaterials();
   }, []);
 
   const openAddModal = () => {
@@ -153,39 +158,53 @@ export default function AdminMateriPage() {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveMaterial = (event) => {
+  const handleSaveMaterial = async (event) => {
     event.preventDefault();
-    let updated;
-    if (isEditing) {
-      updated = materials.map((item) =>
-        item.id === currentMaterial.id ? { ...item, ...currentMaterial } : item
-      );
-    } else {
-      updated = [
-        ...materials,
-        {
-          ...currentMaterial,
-          id: Date.now(),
-          status: "Aktif",
-        },
-      ];
+    try {
+      const mappedData = mapAdminToUser(currentMaterial);
+      if (isEditing) {
+        const res = await materialApi.updateMaterial(currentMaterial.id, mappedData);
+        if (res.ok || res.status === 200 || res.status === 201) {
+          setMaterials(materials.map((item) =>
+            item.id === currentMaterial.id ? { ...item, ...currentMaterial } : item
+          ));
+          closeModal();
+        } else {
+          alert("Gagal menyimpan: " + (res.error?.message || res.status));
+        }
+      } else {
+        const res = await materialApi.createMaterial(mappedData);
+        if (res.ok || res.status === 200 || res.status === 201) {
+          const newMaterial = mapUserToAdmin(res.data?.material || res.data || mappedData);
+          setMaterials([...materials, { ...newMaterial, id: newMaterial.id || Date.now() }]);
+          closeModal();
+        } else {
+          alert("Gagal menyimpan: " + (res.error?.message || res.status));
+        }
+      }
+    } catch (error) {
+      alert("Terjadi kesalahan: " + error.message);
     }
-    setMaterials(updated);
-    materialApi.saveAllMaterials(updated.map(mapAdminToUser));
-    closeModal();
   };
 
   const handleDeleteMaterial = (id) => {
     setConfirmDelete({ isOpen: true, materialId: id });
   };
 
-  const confirmDeleteAction = () => {
+  const confirmDeleteAction = async () => {
     const { materialId } = confirmDelete;
     if (!materialId) return;
-    const updated = materials.filter((item) => item.id !== materialId);
-    setMaterials(updated);
-    materialApi.saveAllMaterials(updated.map(mapAdminToUser));
-    setConfirmDelete({ isOpen: false, materialId: null });
+    try {
+      const res = await materialApi.deleteMaterial(materialId);
+      if (res.ok || res.status === 200 || res.status === 204) {
+        setMaterials(materials.filter((item) => item.id !== materialId));
+        setConfirmDelete({ isOpen: false, materialId: null });
+      } else {
+        alert("Gagal menghapus: " + (res.error?.message || res.status));
+      }
+    } catch (error) {
+      alert("Terjadi kesalahan: " + error.message);
+    }
   };
 
   const handleAddBlock = () => {
