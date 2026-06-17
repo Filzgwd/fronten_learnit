@@ -45,16 +45,11 @@ export default function Signup() {
     setLoading(true);
     try {
       const res = await signup(form);
-      // Local fallback returns token directly in res.data
-      if (res?.data?.token) {
-        setSuccessDestination("/dashboard");
-      } else {
-        setSuccessDestination("/signin");
-      }
+      setSuccessDestination("/signin");
       setShowSuccessPopup(true);
       setTimeout(() => {
         setShowSuccessPopup(false);
-        navigate(res?.data?.token ? "/dashboard" : "/signin", { state: { forceShow: true } });
+        navigate("/signin", { state: { forceShow: true } });
       }, 2000);
     } catch (err) {
       const res = err.response?.data;

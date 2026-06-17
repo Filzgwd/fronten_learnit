@@ -19,6 +19,7 @@ function NilaiContent() {
   const quizScores = getQuizScores();
 
   const [reviewPath, setReviewPath] = useState(null);
+  const [showLockedPopup, setShowLockedPopup] = useState(false);
 
   const username = user?.name ? user.name.split(" ")[0] : "Siswa";
 
@@ -147,9 +148,12 @@ function NilaiContent() {
 
                   <button 
                     className={`nilai-action-btn ${isUnlocked ? 'unlocked' : 'locked'}`}
-                    disabled={!isUnlocked}
                     onClick={() => {
-                      if (isUnlocked) navigate(`/quiz/${card.key}`);
+                      if (isUnlocked) {
+                        navigate(`/quiz/${card.key}`);
+                      } else {
+                        setShowLockedPopup(true);
+                      }
                     }}
                   >
                     {isUnlocked ? (
@@ -253,6 +257,27 @@ function NilaiContent() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Locked Quiz Modal */}
+      {showLockedPopup && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", animation: "fadeUp 0.3s ease", padding: "20px" }} onClick={() => setShowLockedPopup(false)}>
+          <div style={{ background: "#fff", padding: "32px 24px", borderRadius: "20px", maxWidth: "400px", width: "100%", textAlign: "center", boxShadow: "0 20px 50px rgba(0,0,0,0.3)", animation: "modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ width: "64px", height: "64px", background: "#fee2e2", color: "#ef4444", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>
+              <i className="fa-solid fa-lock"></i>
+            </div>
+            <h3 style={{ fontSize: "22px", fontWeight: "700", color: "#111827", margin: "0 0 12px 0" }}>Kuis Terkunci</h3>
+            <p style={{ fontSize: "15px", color: "#4b5563", margin: "0 0 24px 0", lineHeight: "1.5" }}>Anda belum menyelesaikan semua materi di jalur ini. Silakan baca dan selesaikan materi hingga 100% untuk membuka kuis.</p>
+            <button 
+              onClick={() => setShowLockedPopup(false)}
+              style={{ width: "100%", padding: "12px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: "10px", fontSize: "16px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s" }}
+              onMouseOver={(e) => e.target.style.background = "#2563eb"}
+              onMouseOut={(e) => e.target.style.background = "#3b82f6"}
+            >
+              Mengerti
+            </button>
           </div>
         </div>
       )}

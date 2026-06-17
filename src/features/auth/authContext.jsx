@@ -92,21 +92,6 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (data) => {
     const res = await authApi.signup(data);
-    const token = getTokenFromResponse(res.data);
-    if (token) {
-      const newUser = buildUser(token, getUserFromResponse(res.data));
-      localStorage.setItem("authToken", token);
-      if (newUser.role) {
-        localStorage.setItem("authRole", newUser.role);
-      }
-      localStorage.setItem("localCurrentUser", JSON.stringify({
-        id: newUser.id || newUser.sub || newUser.email,
-        email: newUser.email,
-        name: newUser.name || newUser.namaLengkap,
-        role: newUser.role,
-      }));
-      setUser(newUser);
-    }
     return res;
   };
 

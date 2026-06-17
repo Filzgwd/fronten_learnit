@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../features/auth/authContext";
 import Sidebar from "../features/dashboard/Sidebar";
 import "../../css/dashboard.css";
+import "../../css/forum.css";
 
+const FORUM_STORAGE_KEY = "forumPosts";
 const initialPosts = [];
 
 export default function ForumPage() {
@@ -15,7 +17,19 @@ export default function ForumPage() {
     navigate("/signin");
   }
 
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState(() => {
+    try {
+      const saved = localStorage.getItem(FORUM_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return initialPosts;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(posts));
+  }, [posts]);
 
   const [newPost, setNewPost] = useState("");
 
@@ -63,25 +77,21 @@ export default function ForumPage() {
         </div>
 
         <section className="forum-hero">
-          <div className="hero-inner">
-            <h2>Ayo Berdiskusi!</h2>
-            <p>Ajukan pertanyaan dan berbagi pendapat dengan teman Anda di sini.</p>
+          <h2>Ayo Berdiskusi!</h2>
+          <p>Ajukan pertanyaan dan berbagi pendapat dengan teman Anda di sini.</p>
 
-            <form className="forum-compose" onSubmit={addPost}>
-              <textarea
-                placeholder="Tuliskan komentar Anda..."
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-              />
-
-              <div className="compose-actions">
-                <button type="submit" className="btn-send">
-                  <i className="fa-solid fa-arrow-right" />
-                  Kirim Pesan
-                </button>
-              </div>
-            </form>
-          </div>
+          <form className="forum-compose" onSubmit={addPost}>
+            <textarea
+              placeholder="Tuliskan komentar Anda.."
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+            />
+            <div className="compose-actions">
+              <button type="submit" className="btn-send" style={{ padding: "14px 28px", borderRadius: "12px", fontSize: "16px" }}>
+                Kirim <i className="fa-solid fa-paper-plane" style={{ fontSize: "16px", marginLeft: "4px" }} />
+              </button>
+            </div>
+          </form>
         </section>
 
         <section className="forum-list">
@@ -93,10 +103,19 @@ export default function ForumPage() {
             posts.map((p) => (
               <article key={p.id} className="post-card">
                 <div className="post-meta">
-                  <strong>{p.author}</strong>
-                  <div className="post-date">{p.date}</div>
+                  <div className="post-avatar">
+                    <i className="fa-solid fa-user"></i>
+                  </div>
+                  <div className="post-author-info">
+                    <strong>{p.author}</strong>
+                    <div className="post-date">{p.date}</div>
+                  </div>
                 </div>
                 <div className="post-content">{p.content}</div>
+
+                <div className="post-reply-info">
+                  <i className="fa-regular fa-comment"></i> {p.replies.length} Pembahasan
+                </div>
 
                 <div className="post-reply">
                   <ReplyBox onReply={(text) => addReply(p.id, text)} />
@@ -104,8 +123,15 @@ export default function ForumPage() {
                     <div className="replies">
                       {p.replies.map((r) => (
                         <div key={r.id} className="reply-item">
-                          <strong>{r.author}</strong>
-                          <div className="reply-date">{r.date}</div>
+                          <div className="post-meta">
+                            <div className="post-avatar">
+                              <i className="fa-solid fa-user"></i>
+                            </div>
+                            <div className="post-author-info">
+                              <strong>{r.author}</strong>
+                              <div className="post-date">{r.date}</div>
+                            </div>
+                          </div>
                           <div className="reply-text">{r.text}</div>
                         </div>
                       ))}
@@ -133,11 +159,13 @@ function ReplyBox({ onReply }) {
   return (
     <form className="reply-box" onSubmit={submit}>
       <input
-        placeholder="Berikan balasan Anda.."
+        placeholder="Berikan balasan Anda..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <button type="submit" className="reply-send"><i className="fa-solid fa-arrow-right"></i></button>
+      <button type="submit" className="reply-send">
+        <i className="fa-solid fa-play"></i>
+      </button>
     </form>
   );
 }

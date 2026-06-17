@@ -34,14 +34,10 @@ function reducer(state, action) {
 }
 
 function calcStats(materials, progress) {
-  const quizScores = getQuizScores();
-  const completedQuizzes = Object.keys(quizScores).length;
-  const totalQuizzes = Object.keys(learningPaths).length;
-
-  const total = materials.length + totalQuizzes;
+  const total = materials.length;
   const completed = materials.filter(
     (material) => Number(progress[material.id] || 0) >= 100,
-  ).length + completedQuizzes;
+  ).length;
   
   const totalProgress = materials.reduce((sum, material) => {
     const value = Math.min(
@@ -49,7 +45,7 @@ function calcStats(materials, progress) {
       Math.max(0, Number(progress[material.id] || 0)),
     );
     return sum + value;
-  }, 0) + (completedQuizzes * 100);
+  }, 0);
 
   return {
     total,
@@ -63,24 +59,21 @@ function calcPathStats(materials, progress, pathKey) {
     (material) => String(material.path || "").trim() === pathKey,
   );
   
-  const quizScores = getQuizScores();
-  const hasQuiz = quizScores[pathKey] ? 1 : 0;
-
-  const totalCount = materialsInPath.length + 1; // +1 for the quiz
+  const totalCount = materialsInPath.length;
   const doneCount = materialsInPath.filter(
     (material) => Number(progress[material.id] || 0) >= 100,
-  ).length + hasQuiz;
+  ).length;
   
   const pathPercent =
     totalCount > 0
       ? Math.round(
-          (materialsInPath.reduce((sum, material) => {
+          materialsInPath.reduce((sum, material) => {
             const value = Math.min(
               100,
               Math.max(0, Number(progress[material.id] || 0)),
             );
             return sum + value;
-          }, 0) + (hasQuiz * 100)) / totalCount,
+          }, 0) / totalCount,
         )
       : 0;
 

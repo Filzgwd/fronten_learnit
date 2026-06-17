@@ -81,11 +81,25 @@ function MateriReadContent() {
   return (
     <div className="dashboard-container" style={{ display: "block", background: "#f8fafc" }}>
       <main className="main-content" style={{ marginLeft: 0 }}>
-        <div className="materi-read-top-nav" style={{ marginBottom: "20px" }}>
+        <div className="materi-read-top-nav" style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Link to={`/materi/${pathKey}`} className="materi-read-back">
             <i className="fa-solid fa-arrow-left" style={{ marginRight: "8px" }} />
             Kembali ke daftar materi
           </Link>
+          {!isCompleted ? (
+            <button
+              onClick={handleCompleteMaterial}
+              style={{ padding: "8px 16px", fontSize: "14px", fontWeight: "600", color: "#fff", background: "#2563eb", border: "none", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "background 0.2s" }}
+              onMouseOver={(e) => e.currentTarget.style.background = "#1d4ed8"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#2563eb"}
+            >
+              <i className="fa-solid fa-check" /> Selesai Mempelajari
+            </button>
+          ) : (
+            <span style={{ padding: "8px 16px", fontSize: "14px", fontWeight: "600", color: "#10b981", background: "#d1fae5", borderRadius: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <i className="fa-solid fa-check-double" /> Diselesaikan
+            </span>
+          )}
         </div>
 
         <div className="materi-read-hero">
@@ -169,7 +183,11 @@ function MateriReadContent() {
         </article>
 
         {/* Manual completion button */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "40px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "40px", marginBottom: "20px", flexWrap: "wrap", gap: "16px" }}>
+          <Link to={`/materi/${pathKey}`} style={{ padding: "14px 28px", fontSize: "16px", fontWeight: "600", color: "#4b5563", background: "#f1f5f9", borderRadius: "12px", textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", transition: "all 0.2s" }} onMouseOver={(e) => { e.currentTarget.style.background = "#e2e8f0"; e.currentTarget.style.color = "#1e293b"; }} onMouseOut={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#4b5563"; }}>
+            <i className="fa-solid fa-arrow-left" /> Kembali ke Daftar Materi
+          </Link>
+
           {!isCompleted ? (
             <button
               onClick={handleCompleteMaterial}
