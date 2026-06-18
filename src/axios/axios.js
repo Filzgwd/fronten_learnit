@@ -6,6 +6,15 @@ const api = axios.create({
   timeout: 10000, // 10 detik
 });
 
+// Add Authorization header interceptor
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // "http://localhost:3000/api" + "users" => "http://localhost:3000/api/users"
 
 // const myData = fetch("https://jsonplaceholder.typicode.com/todos/1")
