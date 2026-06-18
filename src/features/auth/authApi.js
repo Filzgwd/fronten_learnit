@@ -12,9 +12,38 @@ api.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log("[authApi] request", {
+      method: config.method,
+      url: `${config.baseURL}${config.url}`,
+      headers: config.headers,
+      params: config.params,
+      data: config.data,
+    });
     return config;
   },
   (err) => Promise.reject(err),
+);
+
+api.interceptors.response.use(
+  (response) => {
+    console.log("[authApi] response", {
+      method: response.config.method,
+      url: `${response.config.baseURL}${response.config.url}`,
+      status: response.status,
+      data: response.data,
+    });
+    return response;
+  },
+  (err) => {
+    console.error("[authApi] response error", {
+      method: err.config?.method,
+      url: err.config?.url ? `${err.config?.baseURL || API_BASE_URL}${err.config.url}` : undefined,
+      status: err.response?.status,
+      data: err.response?.data,
+      message: err.message,
+    });
+    return Promise.reject(err);
+  },
 );
 
 // ─── LOCAL USER STORAGE ─────────────────────────────────────────
@@ -97,16 +126,30 @@ export const authApi = {
   },
 
   signin: async (data) => {
+    console.log("[authApi.signin] request", {
+      url: `${API_BASE_URL}/auth/login`,
+      payload: data,
+    });
     try {
       const res = await api.post("/auth/login", data);
+      console.log("[authApi.signin] response", {
+        status: res.status,
+        data: res.data,
+      });
       // Normalize role: backend uses "student", we treat it as "user"
       if (res.data?.user?.role === "student") {
         res.data.user.role = "user";
       }
       return res;
     } catch (err) {
+      console.error("[authApi.signin] error", {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
       // Backend unavailable → check local users
-      if (!err.response) {
+      // Only fallback to local storage in DEV mode, not in production
+      if (!err.response && import.meta.env.DEV) {
         const users = getLocalUsers();
         const found = users.find(
           (u) =>

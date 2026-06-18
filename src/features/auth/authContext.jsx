@@ -47,15 +47,26 @@ export const AuthProvider = ({ children }) => {
 
   const buildUser = (token, responseUser) => {
     const payload = parseJwt(token);
+    const baseUser = {
+      ...(responseUser || {}),
+      ...(payload || {}),
+    };
+    const normalizedRole = baseUser.role
+      ? baseUser.role.toString().trim().toLowerCase()
+      : undefined;
     return {
       token,
-      ...(responseUser || payload || {}),
+      ...baseUser,
+      ...(normalizedRole ? { role: normalizedRole } : {}),
     };
   };
 
   const signin = async (data) => {
+    console.log("[AuthContext.signin] request", data);
     const res = await authApi.signin(data);
+    console.log("[AuthContext.signin] response", res);
     const token = getTokenFromResponse(res.data);
+    console.log("[AuthContext.signin] token", token);
     if (!token) throw new Error("Token login tidak diterima dari server");
     const newUser = buildUser(token, getUserFromResponse(res.data));
     localStorage.setItem("authToken", token);

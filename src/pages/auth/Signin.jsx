@@ -155,18 +155,20 @@ export default function Signin() {
 
     try {
 
+      console.log("[Signin] submit login", form);
       const signedInUser =
         await signin(form);
 
-      const dest =
-        location.state?.from;
+      const dest = location.state?.from;
+      const role = signedInUser?.role?.toString().toLowerCase();
+      console.log("[Signin] login result", { role, dest, signedInUser });
 
       if (dest) {
 
         navigate(dest);
 
       } else if (
-        signedInUser?.role === "admin"
+        role === "admin"
       ) {
 
         navigate("/admin");
@@ -179,6 +181,7 @@ export default function Signin() {
 
     } catch (err) {
 
+      console.error("[Signin] login error", err);
       const res =
         err.response?.data;
 
