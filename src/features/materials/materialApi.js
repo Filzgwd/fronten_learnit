@@ -1,5 +1,4 @@
 import { request } from "../../axios/axios";
-import { defaultMaterials } from "./learningPaths";
 
 const MATERIALS_STORAGE_KEY = "adminMaterials";
 
@@ -43,12 +42,7 @@ function getLocalMaterials() {
   } catch (e) {
     console.error("Error reading materials from localStorage", e);
   }
-  try {
-    localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(defaultMaterials));
-  } catch (e) {
-    console.error("Error saving default materials to localStorage", e);
-  }
-  return defaultMaterials;
+  return [];
 }
 
 export const materialApi = {
@@ -80,7 +74,7 @@ export const materialApi = {
     return progress;
   },
 
-  getDefaultMaterials: () => defaultMaterials,
+  getDefaultMaterials: () => [],
 
   getLocalMaterials: () => getLocalMaterials(),
 
