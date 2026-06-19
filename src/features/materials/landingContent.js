@@ -12,8 +12,8 @@ export const aboutContent = {
 };
 
 /**
- * Ganti field `photo` dengan path foto tim (simpan di public/assets/img/team/).
- * Contoh: "/assets/img/team/diah.jpg"
+ * Ganti field `photo` dengan path foto tim (simpan di public/assets/img/).
+ * Contoh: "/assets/img/diah.jpg"
  */
 export const teamMembers = [
   {
@@ -23,7 +23,7 @@ export const teamMembers = [
     name: "Diah Arum Cahyaningtyas",
     description:
       "Menyusun rencana, mengatur timeline, dan memastikan target proyek tercapai.",
-    photo: /assets/img/team/diah.jpg,
+    photo: "/assets/img/diah.jpg",
   },
   {
     id: "wildrga",
@@ -32,7 +32,7 @@ export const teamMembers = [
     name: "Wildrga Putri Aditya.W",
     description:
       "Merancang tampilan antarmuka, wireframe, dan pengalaman pengguna.",
-    photo: /assets/img/team/wildrga.jpg,
+    photo: "/assets/img/wildrga.jpg",
   },
   {
     id: "atika",
@@ -41,7 +41,7 @@ export const teamMembers = [
     name: "Atika Hanifatun Nisa'",
     description:
       "Merancang tampilan antarmuka, wireframe, dan pengalaman pengguna.",
-    photo: /assets/img/team/atika.jpg,
+    photo: "/assets/img/atika.jpg",
   },
   {
     id: "afilla",
@@ -50,7 +50,7 @@ export const teamMembers = [
     name: "M. Afilla Riyan Kefanu",
     description:
       "Mengembangkan fitur website dan mengintegrasikan backend dengan frontend.",
-    photo: /assets/img/team/afilla.jpg,
+    photo: "/assets/img/afilla.jpg",
   },
   {
     id: "tyo",
@@ -59,7 +59,7 @@ export const teamMembers = [
     name: "Tyo Hilmy Hakim",
     description:
       "Mengembangkan fitur website dan mengintegrasikan backend dengan frontend.",
-    photo: /assets/img/team/tyo.jpg,
+    photo: "/assets/img/tyo.jpeg",
   },
   {
     id: "fiqri",
@@ -68,7 +68,7 @@ export const teamMembers = [
     name: "Fiqri Haeqal",
     description:
       "Mengembangkan fitur website dan mengintegrasikan backend dengan frontend.",
-    photo: /assets/img/team/fiqri.jpg,
+    photo: "/assets/img/fiqri.jpg",
   },
 ];
 
