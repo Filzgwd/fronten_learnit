@@ -1,5 +1,25 @@
 import { request } from "../../axios/axios";
 
+// Map category names to learning path keys
+const categoryToPath = {
+  "Algoritma & Pemrograman": "algoritma",
+  "Pengembangan Website": "website",
+  "Desain UI/UX": "uiux",
+  "Kecerdasan Buatan": "ai",
+  "Pemrograman Mobile": "mobile",
+};
+
+// Transform material to add path field based on category
+const transformMaterial = (material) => {
+  const path = categoryToPath[material.category_name] || "website";
+  return {
+    ...material,
+    path,
+    title: material.title || material.name,
+    desc: material.description,
+  };
+};
+
 // ── Per-user progress (user-specific settings, NOT API data cache) ──────────────────────────────────────────
 function getCurrentUserId() {
   try {
@@ -32,11 +52,15 @@ function getLocalProgress() {
 }
 
 export const materialApi = {
-  // Fetch all materials from Neon database (NO localStorage fallback)
+  // Fetch all materials from Neon database with path transformation
   getAll: async (signal) => {
     const res = await request({ method: "get", url: "/materials", signal });
     if (!res.ok) {
       throw new Error("Failed to fetch materials from database");
+    }
+    // Transform materials to include path field
+    if (res.data && Array.isArray(res.data)) {
+      res.data = res.data.map(transformMaterial);
     }
     return res;
   },

@@ -24,33 +24,27 @@ const initialMaterial = {
 const pathToTopic = {
   algoritma: "Algoritma & Pemrograman",
   website: "Pengembangan Website",
-  "ui-ux": "Desain UI/UX",
-  "data-science": "Data Science",
+  uiux: "Desain UI/UX",
   ai: "Kecerdasan Buatan",
   mobile: "Pemrograman Mobile",
-  "game-dev": "Game Development",
 };
 
 const topicToPath = {
   "Algoritma & Pemrograman": "algoritma",
   "Pengembangan Website": "website",
-  "Desain UI/UX": "ui-ux",
-  "Data Science": "data-science",
+  "Desain UI/UX": "uiux",
+  "Desain UI / UX": "uiux",
   "Kecerdasan Buatan": "ai",
-  "Pemrograman Mobile": "mobile",
-  "Game Development": "game-dev",
-  "Website": "website",
-  "UI/UX": "ui-ux",
   "Kecerdasan Buatan (AI)": "ai",
+  "Pemrograman Mobile": "mobile",
+  "Website": "website",
+  "UI/UX": "uiux",
   "Mobile": "mobile",
   "algoritma": "algoritma",
   "website": "website",
-  "uiux": "ui-ux",
-  "ui-ux": "ui-ux",
+  "uiux": "uiux",
   "ai": "ai",
-  "mobile": "mobile",
-  "game-dev": "game-dev",
-  "data-science": "data-science"
+  "mobile": "mobile"
 };
 
 const mapUserToAdmin = (material) => {
@@ -367,13 +361,11 @@ export default function AdminMateriPage() {
                     style={{ cursor: "pointer", color: currentMaterial.path ? "#111827" : "#9ca3af" }}
                   >
                     <option value="" disabled>Pilih Topik</option>
-                    <option value="website"> Pengembangan Website</option>
-                    <option value="ui-ux"> Desain UI/UX</option>
-                    <option value="data-science"> Data Science</option>
-                    <option value="mobile"> Pemrograman Mobile</option>
-                    <option value="game-dev">Game Development</option>
-                    <option value="ai"> Kecerdasan Buatan</option>
-                    <option value="algoritma"> Algoritma &amp; Pemrograman</option>
+                    <option value="algoritma">Algoritma &amp; Pemrograman</option>
+                    <option value="website">Pengembangan Website</option>
+                    <option value="uiux">Desain UI/UX</option>
+                    <option value="ai">Kecerdasan Buatan</option>
+                    <option value="mobile">Pemrograman Mobile</option>
                   </select>
                 </div>
 
