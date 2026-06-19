@@ -92,7 +92,10 @@ export const materialApi = {
   getDefaultMaterials: () => [],
 
   createMaterial: async (data, signal) => {
-    return await request({ method: "post", url: "/materials", data, signal });
+    console.log('🌐 [materialApi.createMaterial] Sending data:', JSON.stringify(data, null, 2));
+    const result = await request({ method: "post", url: "/materials", data, signal });
+    console.log('🌐 [materialApi.createMaterial] Response:', result);
+    return result;
   },
 
   updateMaterial: async (id, data, signal) => {

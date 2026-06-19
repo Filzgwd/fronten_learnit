@@ -263,6 +263,9 @@ export default function AdminMateriPage() {
         })
       };
 
+      console.log('📝 [ADMIN] currentMaterial blocks:', currentMaterial.blocks);
+      console.log('📝 [ADMIN] cleanedMaterial blocks (after filter):', cleanedMaterial.blocks);
+
       // Validasi: harus ada minimal satu block yang berisi konten
       if (cleanedMaterial.blocks.length === 0) {
         alert("⚠️ Anda harus menambahkan minimal satu blok konten dengan data yang terisi!");
@@ -270,6 +273,8 @@ export default function AdminMateriPage() {
       }
 
       const mappedData = mapAdminToUser(cleanedMaterial, categoryMap);
+      console.log('📝 [ADMIN] mappedData to send to backend:', mappedData);
+      
       if (isEditing) {
         const res = await materialApi.updateMaterial(currentMaterial.id, mappedData);
         if (res.ok || res.status === 200 || res.status === 201) {
@@ -282,8 +287,21 @@ export default function AdminMateriPage() {
         }
       } else {
         const res = await materialApi.createMaterial(mappedData);
+        console.log('📝 [ADMIN] Create response:', res);
         if (res.ok || res.status === 200 || res.status === 201) {
-          const newMaterial = mapUserToAdmin(res.data?.material || res.data || mappedData);
+          console.log('📝 [ADMIN] Response data:', res.data);
+          console.log('📝 [ADMIN] res.data?.material:', res.data?.material);
+          
+          // If response doesn't have blocks, use mappedData which has them
+          const responseWithBlocks = {
+            ...(res.data?.material || res.data || {}),
+            blocks: (res.data?.material?.blocks || res.data?.blocks || mappedData.blocks),
+            image: (res.data?.material?.image || res.data?.image || mappedData.image),
+            videoLink: (res.data?.material?.videoLink || res.data?.videoLink || mappedData.videoLink),
+          };
+          
+          const newMaterial = mapUserToAdmin(responseWithBlocks);
+          console.log('📝 [ADMIN] newMaterial after mapUserToAdmin:', newMaterial);
           setMaterials([...materials, { ...newMaterial, id: newMaterial.id || Date.now() }]);
           closeModal();
         } else {
