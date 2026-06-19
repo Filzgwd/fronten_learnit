@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../features/auth/authContext";
 import Sidebar from "../features/dashboard/Sidebar";
+import { forumApi } from "../features/forum/forumApi";
 import "../../css/dashboard.css";
 import "../../css/forum.css";
-
-const FORUM_STORAGE_KEY = "forumPosts";
-const initialPosts = [];
 
 export default function ForumPage() {
   const { logout, user } = useAuth();
@@ -17,51 +15,89 @@ export default function ForumPage() {
     navigate("/signin");
   }
 
-  const [posts, setPosts] = useState(() => {
-    try {
-      const saved = localStorage.getItem(FORUM_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return initialPosts;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(posts));
-  }, [posts]);
-
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [newPost, setNewPost] = useState("");
 
-  function addPost(e) {
-    e.preventDefault();
-    if (!newPost.trim()) return;
-    const p = {
-      id: Date.now(),
-      author: user?.name || "Saya",
-      date: new Date().toLocaleDateString(),
-      content: newPost.trim(),
-      replies: [],
-    };
-    setPosts([p, ...posts]);
-    setNewPost("");
+  async function fetchPosts() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await forumApi.getAllPosts();
+      if (!res.ok) {
+        throw new Error(res.error || "Gagal memuat forum");
+      }
+
+      const rawPosts = res.data || [];
+
+      // Ambil balasan untuk setiap postingan secara asinkronus
+      const postsWithReplies = await Promise.all(
+        rawPosts.map(async (p) => {
+          const commentsRes = await forumApi.getCommentsByPost(p.id);
+          const replies = commentsRes.ok ? commentsRes.data : [];
+          return {
+            id: p.id,
+            author: p.user_name || "Anonim",
+            date: new Date(p.created_at).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }),
+            content: p.content,
+            replies: replies.map((r) => ({
+              id: r.id,
+              author: r.user_name || "Anonim",
+              date: new Date(r.created_at).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }),
+              text: r.content,
+            })),
+          };
+        })
+      );
+
+      setPosts(postsWithReplies);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Gagal memuat diskusi");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function addReply(postId, text) {
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  async function addPost(e) {
+    e.preventDefault();
+    if (!newPost.trim()) return;
+    try {
+      const res = await forumApi.createPost(newPost.trim());
+      if (!res.ok) {
+        throw new Error(res.error || "Gagal mengirim diskusi");
+      }
+      setNewPost("");
+      await fetchPosts();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function addReply(postId, text) {
     if (!text.trim()) return;
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? {
-              ...p,
-              replies: [
-                ...p.replies,
-                { id: Date.now(), author: user?.name || "Saya", date: new Date().toLocaleDateString(), text: text.trim() },
-              ],
-            }
-          : p
-      )
-    );
+    try {
+      const res = await forumApi.createComment(postId, text.trim());
+      if (!res.ok) {
+        throw new Error(res.error || "Gagal mengirim balasan");
+      }
+      await fetchPosts();
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   return (
@@ -95,7 +131,15 @@ export default function ForumPage() {
         </section>
 
         <section className="forum-list">
-          {posts.length === 0 ? (
+          {loading ? (
+            <div className="forum-empty">
+              Sedang memuat forum...
+            </div>
+          ) : error ? (
+            <div className="forum-empty" style={{ color: "#ef4444" }}>
+              {error}
+            </div>
+          ) : posts.length === 0 ? (
             <div className="forum-empty">
               Belum ada komentar. Jadilah yang pertama memulai diskusi.
             </div>
