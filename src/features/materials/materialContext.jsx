@@ -86,21 +86,52 @@ export const MaterialProvider = ({ children }) => {
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchMaterials = async () => {
-      dispatch({ type: "LOADING" });
-      const res = await materialApi.getAll(controller.signal);
+const fetchMaterials = async () => {
+  try {
+    console.log("=== FETCH MATERIALS START ===");
 
-      if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
-        dispatch({ type: "SET_MATERIALS", payload: res.data });
-      } else if (res.status !== 499) {
-        dispatch({
-          type: "SET_MATERIALS",
-          payload: materialApi.getLocalMaterials(),
-        });
-      }
+    dispatch({ type: "LOADING" });
 
-      dispatch({ type: "SET_PROGRESS", payload: materialApi.getProgress() });
-    };
+    const res = await materialApi.getAll(controller.signal);
+
+    console.log("Material API Response:", res);
+
+    if (res.ok && Array.isArray(res.data)) {
+      console.log("Materials loaded:", res.data);
+
+      dispatch({
+        type: "SET_MATERIALS",
+        payload: res.data,
+      });
+    } else {
+      console.error("Material API Error:", res);
+
+      dispatch({
+        type: "ERROR",
+        payload: res.error || "Failed to load materials",
+      });
+    }
+
+    const progress = materialApi.getProgress();
+
+    console.log("Progress:", progress);
+
+    dispatch({
+      type: "SET_PROGRESS",
+      payload: progress,
+    });
+
+    console.log("=== FETCH MATERIALS SUCCESS ===");
+  } catch (err) {
+    console.error("=== FETCH MATERIALS FAILED ===");
+    console.error(err);
+
+    dispatch({
+      type: "ERROR",
+      payload: err.message,
+    });
+  }
+};
 
     fetchMaterials();
     return () => controller.abort();

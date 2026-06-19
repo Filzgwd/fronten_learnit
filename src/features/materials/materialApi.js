@@ -52,16 +52,29 @@ function getLocalProgress() {
 }
 
 export const materialApi = {
-  // Fetch all materials from Neon database with path transformation
   getAll: async (signal) => {
-    const res = await request({ method: "get", url: "/materials", signal });
+    console.log("Calling GET /materials");
+
+    const res = await request({
+      method: "get",
+      url: "/materials",
+      signal,
+    });
+
+    console.log("Raw materials response:", res);
+
     if (!res.ok) {
-      throw new Error("Failed to fetch materials from database");
+      console.error("Materials request failed:", res);
+
+      throw new Error(
+        `Failed to fetch materials. Status: ${res.status}. Error: ${res.error}`
+      );
     }
-    // Transform materials to include path field
+
     if (res.data && Array.isArray(res.data)) {
       res.data = res.data.map(transformMaterial);
     }
+
     return res;
   },
 
