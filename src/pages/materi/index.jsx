@@ -42,6 +42,26 @@ function MateriListContent() {
     );
   }
 
+  if (state.loading && materials.length === 0) {
+    return (
+      <div className="dashboard-container materi-page">
+        <Sidebar onLogout={handleLogout} />
+        <main className="main-content" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+          <div style={{ textAlign: "center" }}>
+            <div className="loading-spinner" style={{ border: "4px solid #e2e8f0", borderTop: "4px solid #2563eb", borderRadius: "50%", width: "40px", height: "40px", animation: "spin 1s linear infinite", margin: "0 auto 16px" }}></div>
+            <p style={{ color: "#64748b", fontSize: "16px", fontWeight: "500" }}>Memuat daftar materi...</p>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container materi-page">
       <Sidebar onLogout={handleLogout} />
