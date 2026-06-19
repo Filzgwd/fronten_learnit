@@ -290,18 +290,20 @@ export default function AdminMateriPage() {
         console.log('📝 [ADMIN] Create response:', res);
         if (res.ok || res.status === 200 || res.status === 201) {
           console.log('📝 [ADMIN] Response data:', res.data);
-          console.log('📝 [ADMIN] res.data?.material:', res.data?.material);
+          console.log('📝 [ADMIN] res.data?.blocks:', res.data?.blocks);
+          console.log('📝 [ADMIN] res.data?.contents:', res.data?.contents);
           
           // If response doesn't have blocks, use mappedData which has them
           const responseWithBlocks = {
-            ...(res.data?.material || res.data || {}),
-            blocks: (res.data?.material?.blocks || res.data?.blocks || mappedData.blocks),
-            image: (res.data?.material?.image || res.data?.image || mappedData.image),
-            videoLink: (res.data?.material?.videoLink || res.data?.videoLink || mappedData.videoLink),
+            ...(res.data || {}),
+            blocks: (res.data?.blocks || res.data?.contents || mappedData.blocks),
+            image: (res.data?.image || mappedData.image),
+            videoLink: (res.data?.videoLink || mappedData.videoLink),
           };
           
+          console.log('📝 [ADMIN] responseWithBlocks.blocks:', responseWithBlocks.blocks);
           const newMaterial = mapUserToAdmin(responseWithBlocks);
-          console.log('📝 [ADMIN] newMaterial after mapUserToAdmin:', newMaterial);
+          console.log('📝 [ADMIN] newMaterial.blocks after mapUserToAdmin:', newMaterial.blocks);
           setMaterials([...materials, { ...newMaterial, id: newMaterial.id || Date.now() }]);
           closeModal();
         } else {
