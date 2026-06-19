@@ -135,27 +135,90 @@ export default function AdminMateriPage() {
     setCurrentMaterial((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageFileChange = (field, file) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      handleChange(field, reader.result || "");
-    };
-    reader.readAsDataURL(file);
+  // Compress image to reduce payload size for NGINX 1MB limit
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Reduce dimensions if image is too large
+          const maxDimension = 1200;
+          if (width > height && width > maxDimension) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Try different quality levels until size is acceptable
+          let quality = 0.8;
+          let compressed = canvas.toDataURL("image/jpeg", quality);
+
+          while (compressed.length > 800000 && quality > 0.3) {
+            quality -= 0.1;
+            compressed = canvas.toDataURL("image/jpeg", quality);
+          }
+
+          resolve(compressed);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
-  const handleBlockImageFileChange = (index, file) => {
+  const handleImageFileChange = async (field, file) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
+    try {
+      const compressedImage = await compressImage(file);
+      handleChange(field, compressedImage);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      // Fallback to original if compression fails
+      const reader = new FileReader();
+      reader.onload = () => {
+        handleChange(field, reader.result || "");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleBlockImageFileChange = async (index, file) => {
+    if (!file) return;
+    try {
+      const compressedImage = await compressImage(file);
       setCurrentMaterial((prev) => ({
         ...prev,
         blocks: prev.blocks.map((block, idx) =>
-          idx === index ? { ...block, image: reader.result || "" } : block
+          idx === index ? { ...block, image: compressedImage } : block
         ),
       }));
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error compressing block image:", error);
+      // Fallback to original if compression fails
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCurrentMaterial((prev) => ({
+          ...prev,
+          blocks: prev.blocks.map((block, idx) =>
+            idx === index ? { ...block, image: reader.result || "" } : block
+          ),
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSaveMaterial = async (event) => {
