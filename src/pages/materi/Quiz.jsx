@@ -2,10 +2,18 @@ import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { MaterialProvider } from "../../features/materials/materialContext";
 import { learningPaths } from "../../features/materials/learningPaths";
-import { getQuizForPath, saveQuizScore } from "../../features/materials/quizData";
+import { quizApi } from "../../features/materials/quizApi";
 import { useAuth } from "../../features/auth/authContext";
 
 const OPTION_LABELS = ["A", "B", "C", "D"];
+
+const pathKeyToTopic = {
+  algoritma: "Algoritma & Pemrograman",
+  website: "Pengembangan Website",
+  uiux: "Desain UI/UX",
+  ai: "Kecerdasan Buatan",
+  mobile: "Pemrograman Mobile",
+};
 
 function QuizContent() {
   const { pathKey } = useParams();
@@ -13,13 +21,50 @@ function QuizContent() {
   const navigate = useNavigate();
 
   const config = learningPaths[pathKey];
-  const quizData = getQuizForPath(pathKey);
+  const [quizData, setQuizData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [phase, setPhase] = useState("quiz"); // "quiz" | "result" | "review"
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(quizData ? quizData.duration * 60 : 600);
+  const [timeLeft, setTimeLeft] = useState(600);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      try {
+        setLoading(true);
+        const res = await quizApi.getAll();
+        if (res.data && Array.isArray(res.data)) {
+          const targetTopic = pathKeyToTopic[pathKey];
+          const found = res.data.find((q) => q.category_name === targetTopic);
+          if (found) {
+            const mappedQuiz = {
+              id: found.id,
+              title: found.title,
+              duration: found.duration || 10,
+              questions: (found.questions || []).map((q) => ({
+                id: q.id,
+                text: q.question,
+                options: (q.options || []).map((o) => ({
+                  id: o.id,
+                  text: o.option_text,
+                  isCorrect: o.is_correct,
+                })),
+              })),
+            };
+            setQuizData(mappedQuiz);
+            setTimeLeft((found.duration || 10) * 60);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading quiz:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuiz();
+  }, [pathKey]);
 
   async function handleLogout() {
     await logout();
@@ -28,41 +73,76 @@ function QuizContent() {
 
   // Timer countdown
   const handleSubmit = useCallback(
-    (auto = false) => {
-      if (submitted) return;
+    async (auto = false) => {
+      if (submitted || !quizData) return;
       setSubmitted(true);
 
-      const questions = quizData?.questions || [];
-      let correct = 0;
-      questions.forEach((q) => {
-        const chosen = answers[q.id];
-        const correctOption = q.options.find((o) => o.isCorrect);
-        if (chosen && correctOption && chosen === correctOption.id) {
-          correct++;
+      const formattedAnswers = Object.entries(answers).map(([qId, optId]) => ({
+        question_id: qId,
+        selected_option_ids: [optId],
+      }));
+
+      try {
+        const res = await quizApi.submitQuiz({
+          quiz_id: quizData.id,
+          answers: formattedAnswers,
+        });
+
+        if (res.data && typeof res.data.score === "number") {
+          setScore(res.data.score);
+        } else {
+          const questions = quizData.questions || [];
+          let correct = 0;
+          questions.forEach((q) => {
+            const chosen = answers[q.id];
+            const correctOption = q.options.find((o) => o.isCorrect);
+            if (chosen && correctOption && chosen === correctOption.id) {
+              correct++;
+            }
+          });
+
+          const finalScore =
+            questions.length > 0
+              ? Math.round((correct / questions.length) * 100)
+              : 0;
+          setScore(finalScore);
         }
-      });
-
-      const finalScore =
-        questions.length > 0
-          ? Math.round((correct / questions.length) * 100)
-          : 0;
-
-      saveQuizScore(pathKey, finalScore, answers);
-      setScore(finalScore);
-      setPhase("result");
+        setPhase("result");
+      } catch (err) {
+        console.error("Error submitting quiz:", err);
+        alert("Gagal mengirim jawaban: " + err.message);
+        setSubmitted(false);
+      }
     },
-    [submitted, quizData, answers, pathKey]
+    [submitted, quizData, answers]
   );
 
   useEffect(() => {
-    if (submitted || phase === "result") return;
+    if (submitted || phase === "result" || loading || !quizData) return;
     if (timeLeft <= 0) {
       handleSubmit(true);
       return;
     }
     const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearTimeout(timer);
-  }, [timeLeft, submitted, phase, handleSubmit]);
+  }, [timeLeft, submitted, phase, handleSubmit, loading, quizData]);
+
+  if (loading) {
+    return (
+      <div className="dashboard-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "#f8fafc" }}>
+        <div style={{ textAlign: "center" }}>
+          <div className="loading-spinner" style={{ border: "4px solid #e2e8f0", borderTop: "4px solid #2563eb", borderRadius: "50%", width: "40px", height: "40px", animation: "spin 1s linear infinite", margin: "0 auto 16px" }}></div>
+          <p style={{ color: "#64748b", fontSize: "16px", fontWeight: "500" }}>Memuat kuis...</p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      </div>
+    );
+  }
 
   if (!config || !quizData) {
     return (

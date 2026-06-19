@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ConfirmDialog from "../../features/todos/ConfirmDialog";
-import { QUIZ_STORAGE_KEY } from "../../features/materials/quizData";
+import { quizApi } from "../../features/materials/quizApi";
+import { categoryApi } from "../../features/categories/categoryApi";
 
 const initialQuestion = {
   text: "",
@@ -34,74 +35,71 @@ const getPathKeyFromMaterial = (material) => {
   return found ? found.pathKey : "";
 };
 
-const INITIAL_QUIZ_LIST = [
-  {
-    id: 1,
-    title: "Quiz Pengembangan Website",
-    material: "Pengembangan Website",
-    pathKey: "website",
-    duration: "15",
-    status: "Aktif",
-    questions: [
-      {
-        text: "Apa yang dimaksud dengan HTML?",
-        options: [
-          { id: 1, text: "Bahasa pemrograman", isCorrect: false },
-          { id: 2, text: "Struktur konten web", isCorrect: true },
-          { id: 3, text: "Database website", isCorrect: false },
-          { id: 4, text: "Server web", isCorrect: false },
-        ],
-      },
-    ],
-  },
-];
-
-const loadStoredQuizzes = () => {
-  try {
-    const stored = JSON.parse(localStorage.getItem(QUIZ_STORAGE_KEY) || "null");
-    if (Array.isArray(stored)) {
-      return stored;
-    }
-
-    if (stored && typeof stored === "object") {
-      return Object.entries(stored).map(([pathKey, quiz], index) => ({
-        ...quiz,
-        pathKey,
-        material:
-          relatedMaterials.find((item) => item.pathKey === pathKey)?.label ||
-          quiz.material ||
-          "",
-        id: quiz.id ?? Date.now() + index,
-        status: quiz.status || "Aktif",
-      }));
-    }
-  } catch {
-    // ignore
-  }
-
-  return INITIAL_QUIZ_LIST;
-};
-
 export default function AdminQuizPage() {
-  const [quizzes, setQuizzes] = useState(loadStoredQuizzes);
+  const [quizzes, setQuizzes] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({}); // pathKey -> category_id
+  const [categoryNameMap, setCategoryNameMap] = useState({}); // category_id -> name
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentQuiz, setCurrentQuiz] = useState(initialQuiz);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, quizId: null });
 
-  useEffect(() => {
-    const payload = {};
-    quizzes.forEach((quiz) => {
-      if (quiz.pathKey) {
-        payload[quiz.pathKey] = {
-          title: quiz.title,
-          duration: quiz.duration,
-          questions: quiz.questions,
-        };
+  const topicToPath = {
+    "Algoritma & Pemrograman": "algoritma",
+    "Pengembangan Website": "website",
+    "Desain UI/UX": "uiux",
+    "Kecerdasan Buatan": "ai",
+    "Pemrograman Mobile": "mobile",
+  };
+
+  const fetchQuizzesAndCategories = async () => {
+    try {
+      const catRes = await categoryApi.getAll();
+      const catMap = {};
+      const catNameMap = {};
+      if (catRes.data && Array.isArray(catRes.data)) {
+        catRes.data.forEach((cat) => {
+          const pathKey = topicToPath[cat.name] || cat.name.toLowerCase().replace(/\s+/g, "-");
+          catMap[pathKey] = cat.id;
+          catNameMap[cat.id] = cat.name;
+        });
+        setCategoryMap(catMap);
+        setCategoryNameMap(catNameMap);
       }
-    });
-    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(payload));
-  }, [quizzes]);
+
+      const res = await quizApi.getAll();
+      if (res.data && Array.isArray(res.data)) {
+        const mappedQuizzes = res.data.map((quiz) => {
+          const pathKey = topicToPath[quiz.category_name] || "website";
+          return {
+            id: quiz.id,
+            title: quiz.title,
+            material: quiz.category_name,
+            pathKey: pathKey,
+            duration: quiz.duration || "10",
+            status: "Aktif",
+            category_id: quiz.category_id,
+            questions: (quiz.questions || []).map((q) => ({
+              id: q.id,
+              text: q.question,
+              options: (q.options || []).map((o, idx) => ({
+                id: o.id || idx + 1,
+                text: o.option_text,
+                isCorrect: o.is_correct,
+              })),
+            })),
+          };
+        });
+        setQuizzes(mappedQuizzes);
+      }
+    } catch (error) {
+      console.error("Error fetching quizzes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuizzesAndCategories();
+  }, []);
 
   const openAddModal = () => {
     setCurrentQuiz(initialQuiz);
@@ -188,36 +186,61 @@ export default function AdminQuizPage() {
     setConfirmDelete({ isOpen: true, quizId });
   };
 
-  const confirmDeleteAction = () => {
+  const confirmDeleteAction = async () => {
     const { quizId } = confirmDelete;
     if (!quizId) return;
-    setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
-    setConfirmDelete({ isOpen: false, quizId: null });
+    try {
+      const res = await quizApi.deleteQuiz(quizId);
+      if (res.ok || res.status === 200 || res.status === 204) {
+        setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+        setConfirmDelete({ isOpen: false, quizId: null });
+      } else {
+        alert("Gagal menghapus kuis: " + (res.error?.message || res.status));
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat menghapus kuis: " + err.message);
+    }
   };
 
-  const handleSaveQuiz = (event) => {
+  const handleSaveQuiz = async (event) => {
     event.preventDefault();
     const pathKey = getPathKeyFromMaterial(currentQuiz.material);
+    const category_id = categoryMap[pathKey];
+
     const quizPayload = {
-      ...currentQuiz,
-      pathKey,
-      duration: currentQuiz.duration,
-      questions: currentQuiz.questions,
-      status: currentQuiz.status || "Aktif",
+      title: currentQuiz.title,
+      category_id,
+      duration: Number(currentQuiz.duration) || 10,
+      questions: currentQuiz.questions.map((q) => ({
+        question: q.text,
+        options: q.options.map((o) => ({
+          option_text: o.text,
+          is_correct: o.isCorrect,
+        })),
+      })),
     };
 
-    if (isEditing) {
-      setQuizzes((prev) =>
-        prev.map((quiz) => (quiz.id === currentQuiz.id ? quizPayload : quiz))
-      );
-    } else {
-      setQuizzes((prev) => [
-        ...prev,
-        { ...quizPayload, id: Date.now(), status: "Aktif" },
-      ]);
+    try {
+      if (isEditing) {
+        const res = await quizApi.updateQuiz(currentQuiz.id, quizPayload);
+        if (res.ok || res.status === 200 || res.status === 201) {
+          fetchQuizzesAndCategories();
+          closeModal();
+        } else {
+          alert("Gagal mengupdate kuis: " + (res.error?.message || res.status));
+        }
+      } else {
+        const res = await quizApi.createQuiz(quizPayload);
+        if (res.ok || res.status === 200 || res.status === 201) {
+          fetchQuizzesAndCategories();
+          closeModal();
+        } else {
+          alert("Gagal menambahkan kuis: " + (res.error?.message || res.status));
+        }
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat menyimpan kuis: " + err.message);
     }
-
-    closeModal();
   };
 
   return (

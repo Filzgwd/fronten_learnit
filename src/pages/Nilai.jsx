@@ -1,27 +1,63 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../features/auth/authContext";
 import Sidebar from "../features/dashboard/Sidebar";
 import { MaterialProvider, useMaterials } from "../features/materials/materialContext";
 import { learningPaths } from "../features/materials/learningPaths";
-import { getQuizScores, getQuizForPath } from "../features/materials/quizData";
-import "../../css/nilai.css"; // Using our newly created and beautifully styled CSS
+import { quizApi } from "../features/materials/quizApi";
+import { getQuizForPath } from "../features/materials/quizData";
+import "../../css/nilai.css"; 
 
 const OPTION_LABELS = ["A", "B", "C", "D"];
 
-// We order the paths according to the design
 const ORDERED_PATHS = ["website", "algoritma", "uiux", "ai", "mobile"];
+
+const topicToPath = {
+  "Algoritma & Pemrograman": "algoritma",
+  "Pengembangan Website": "website",
+  "Desain UI/UX": "uiux",
+  "Kecerdasan Buatan": "ai",
+  "Pemrograman Mobile": "mobile",
+};
 
 function NilaiContent() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { state, pathStats } = useMaterials();
-  const quizScores = getQuizScores();
+  const [quizScores, setQuizScores] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const [reviewPath, setReviewPath] = useState(null);
   const [showLockedPopup, setShowLockedPopup] = useState(false);
 
   const username = user?.name ? user.name.split(" ")[0] : "Siswa";
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        setLoading(true);
+        const res = await quizApi.getResults();
+        if (res.data && Array.isArray(res.data)) {
+          const pathScores = {};
+          res.data.forEach((r) => {
+            const pathKey = topicToPath[r.name] || "website";
+            pathScores[pathKey] = {
+              score: r.score,
+              correct_answers: r.correct_answers,
+              total_questions: r.total_questions,
+              answers: {}, // Details are only stored locally or empty
+            };
+          });
+          setQuizScores(pathScores);
+        }
+      } catch (err) {
+        console.error("Error fetching quiz results:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResults();
+  }, []);
 
   async function handleLogout() {
     await logout();
@@ -74,6 +110,26 @@ function NilaiContent() {
       };
     }).filter(Boolean);
   }, [state.materials, state.progress, pathStats, quizScores]);
+
+  if (loading || state.loading) {
+    return (
+      <div className="dashboard-container nilai-page">
+        <Sidebar onLogout={handleLogout} />
+        <main className="main-content" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+          <div style={{ textAlign: "center" }}>
+            <div className="loading-spinner" style={{ border: "4px solid #e2e8f0", borderTop: "4px solid #2563eb", borderRadius: "50%", width: "40px", height: "40px", animation: "spin 1s linear infinite", margin: "0 auto 16px" }}></div>
+            <p style={{ color: "#64748b", fontSize: "16px", fontWeight: "500" }}>Memuat daftar nilai...</p>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container nilai-page">
