@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { materialApi } from "../../features/materials/materialApi";
+import { categoryApi } from "../../features/categories/categoryApi";
 import ConfirmDialog from "../../features/todos/ConfirmDialog";
 
 const initialMaterial = {
@@ -23,26 +24,33 @@ const initialMaterial = {
 const pathToTopic = {
   algoritma: "Algoritma & Pemrograman",
   website: "Pengembangan Website",
-  uiux: "Desain UI/UX",
+  "ui-ux": "Desain UI/UX",
+  "data-science": "Data Science",
   ai: "Kecerdasan Buatan",
   mobile: "Pemrograman Mobile",
+  "game-dev": "Game Development",
 };
 
 const topicToPath = {
   "Algoritma & Pemrograman": "algoritma",
   "Pengembangan Website": "website",
-  "Desain UI/UX": "uiux",
+  "Desain UI/UX": "ui-ux",
+  "Data Science": "data-science",
   "Kecerdasan Buatan": "ai",
   "Pemrograman Mobile": "mobile",
+  "Game Development": "game-dev",
   "Website": "website",
-  "UI/UX": "uiux",
+  "UI/UX": "ui-ux",
   "Kecerdasan Buatan (AI)": "ai",
   "Mobile": "mobile",
   "algoritma": "algoritma",
   "website": "website",
-  "uiux": "uiux",
+  "uiux": "ui-ux",
+  "ui-ux": "ui-ux",
   "ai": "ai",
-  "mobile": "mobile"
+  "mobile": "mobile",
+  "game-dev": "game-dev",
+  "data-science": "data-science"
 };
 
 const mapUserToAdmin = (material) => {
@@ -64,11 +72,14 @@ const mapUserToAdmin = (material) => {
         image: "",
       },
     ],
+    category_id: material.category_id,
+    path: material.path || topicToPath[material.topic] || "website",
   };
 };
 
-const mapAdminToUser = (material) => {
+const mapAdminToUser = (material, categoryMap) => {
   const path = topicToPath[material.topic] || "website";
+  const category_id = categoryMap[path];
   return {
     id: material.id,
     name: material.name,
@@ -81,24 +92,49 @@ const mapAdminToUser = (material) => {
     title: material.name,
     desc: material.description,
     path: path,
+    category_id,
   };
 };
 
 export default function AdminMateriPage() {
   const [materials, setMaterials] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({}); // map from path to category_id
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(initialMaterial);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, materialId: null });
 
   useEffect(() => {
-    const fetchMaterials = async () => {
-      const res = await materialApi.getAll();
-      if (res.data) {
-        setMaterials(res.data.map(mapUserToAdmin));
+    const fetchData = async () => {
+      try {
+        // Fetch categories
+        const categoriesRes = await categoryApi.getAll();
+        if (categoriesRes.data && Array.isArray(categoriesRes.data)) {
+          setCategories(categoriesRes.data);
+          // Create mapping from topic/path to category_id
+          const map = {};
+          for (const cat of categoriesRes.data) {
+            const path = topicToPath[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '-');
+            map[path] = cat.id;
+          }
+          setCategoryMap(map);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+
+      try {
+        // Fetch materials
+        const res = await materialApi.getAll();
+        if (res.data) {
+          setMaterials(res.data.map(mapUserToAdmin));
+        }
+      } catch (error) {
+        console.error('Error fetching materials:', error);
       }
     };
-    fetchMaterials();
+    fetchData();
   }, []);
 
   const openAddModal = () => {
@@ -224,7 +260,7 @@ export default function AdminMateriPage() {
   const handleSaveMaterial = async (event) => {
     event.preventDefault();
     try {
-      const mappedData = mapAdminToUser(currentMaterial);
+      const mappedData = mapAdminToUser(currentMaterial, categoryMap);
       if (isEditing) {
         const res = await materialApi.updateMaterial(currentMaterial.id, mappedData);
         if (res.ok || res.status === 200 || res.status === 201) {
