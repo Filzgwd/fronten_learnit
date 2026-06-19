@@ -254,7 +254,22 @@ export default function AdminMateriPage() {
   const handleSaveMaterial = async (event) => {
     event.preventDefault();
     try {
-      const mappedData = mapAdminToUser(currentMaterial, categoryMap);
+      // Filter out empty blocks before sending to backend
+      const cleanedMaterial = {
+        ...currentMaterial,
+        blocks: currentMaterial.blocks.filter(block => {
+          // Keep block if it has any content
+          return block.title || block.paragraph || block.example || block.list || block.image;
+        })
+      };
+
+      // Validasi: harus ada minimal satu block yang berisi konten
+      if (cleanedMaterial.blocks.length === 0) {
+        alert("⚠️ Anda harus menambahkan minimal satu blok konten dengan data yang terisi!");
+        return;
+      }
+
+      const mappedData = mapAdminToUser(cleanedMaterial, categoryMap);
       if (isEditing) {
         const res = await materialApi.updateMaterial(currentMaterial.id, mappedData);
         if (res.ok || res.status === 200 || res.status === 201) {
