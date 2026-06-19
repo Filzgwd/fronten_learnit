@@ -1,8 +1,6 @@
 import { request } from "../../axios/axios";
 
-const MATERIALS_STORAGE_KEY = "adminMaterials";
-
-// ── Per-user progress ──────────────────────────────────────────
+// ── Per-user progress (user-specific settings, NOT API data cache) ──────────────────────────────────────────
 function getCurrentUserId() {
   try {
     // Try to read from local current user first
@@ -33,40 +31,20 @@ function getLocalProgress() {
   }
 }
 
-function getLocalMaterials() {
-  try {
-    const data = localStorage.getItem(MATERIALS_STORAGE_KEY);
-    if (data) {
-      return JSON.parse(data);
-    }
-  } catch (e) {
-    console.error("Error reading materials from localStorage", e);
-  }
-  return [];
-}
-
 export const materialApi = {
+  // Fetch all materials from Neon database (NO localStorage fallback)
   getAll: async (signal) => {
-    try {
-      const res = await request({ method: "get", url: "/materials", signal });
-      if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
-        localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(res.data));
-        return res;
-      }
-    } catch (err) {
-      console.warn("Backend fetch failed, using local storage", err);
+    const res = await request({ method: "get", url: "/materials", signal });
+    if (!res.ok) {
+      throw new Error("Failed to fetch materials from database");
     }
-    return {
-      ok: true,
-      data: getLocalMaterials(),
-      status: 200,
-    };
+    return res;
   },
 
-  // Returns progress object for the CURRENT user
+  // Returns progress object for the CURRENT user (stored in localStorage)
   getProgress: () => getLocalProgress(),
 
-  // Save progress for the CURRENT user
+  // Save progress for the CURRENT user (stored in localStorage)
   saveProgress: (materialId, value) => {
     const progress = getLocalProgress();
     progress[materialId] = Math.min(100, Math.max(0, Number(value)));
@@ -75,8 +53,6 @@ export const materialApi = {
   },
 
   getDefaultMaterials: () => [],
-
-  getLocalMaterials: () => getLocalMaterials(),
 
   createMaterial: async (data, signal) => {
     return await request({ method: "post", url: "/materials", data, signal });
@@ -88,10 +64,5 @@ export const materialApi = {
 
   deleteMaterial: async (id, signal) => {
     return await request({ method: "delete", url: `/materials/${id}`, signal });
-  },
-
-  saveAllMaterials: (materials) => {
-    localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(materials));
-    return materials;
   },
 };
