@@ -14,11 +14,67 @@ const ORDERED_PATHS = ["website", "algoritma", "uiux", "ai", "mobile"];
 
 const topicToPath = {
   "Algoritma & Pemrograman": "algoritma",
+  "Algoritma Pemrograman": "algoritma",
+  "Pemrograman": "algoritma",
   "Pengembangan Website": "website",
   "Desain UI/UX": "uiux",
+  "Desain UI / UX": "uiux",
+  "UI / UX": "uiux",
+  "UI/UX": "uiux",
   "Kecerdasan Buatan": "ai",
   "Pemrograman Mobile": "mobile",
+  "Mobile Programming": "mobile",
 };
+
+const normalizeText = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/&/g, "dan")
+    .replace(/\s*\/\s*/g, "/")
+    .replace(/[^a-z0-9/]+/g, " ")
+    .trim();
+
+const normalizedTopicToPath = Object.entries(topicToPath).reduce(
+  (acc, [topic, pathKey]) => {
+    acc[normalizeText(topic)] = pathKey;
+    return acc;
+  },
+  {},
+);
+
+function getResultsArray(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.result)) return data.result;
+  return [];
+}
+
+function resolveResultPathKey(result, materials) {
+  const categoryId = result.category_id || result.categoryId;
+  if (categoryId) {
+    const material = materials.find(
+      (item) => String(item.category_id || item.categoryId || "") === String(categoryId),
+    );
+    if (material?.path) return material.path;
+  }
+
+  const textCandidates = [
+    result.category_name,
+    result.categoryName,
+    result.quiz_title,
+    result.quizTitle,
+    result.title,
+    result.name,
+  ];
+
+  for (const text of textCandidates) {
+    const pathKey = normalizedTopicToPath[normalizeText(text)];
+    if (pathKey) return pathKey;
+  }
+
+  return null;
+}
 
 function NilaiContent() {
   const { user, logout } = useAuth();
@@ -37,19 +93,30 @@ function NilaiContent() {
       try {
         setLoading(true);
         const res = await quizApi.getResults();
-        if (res.data && Array.isArray(res.data)) {
-          const pathScores = {};
-          res.data.forEach((r) => {
-            const pathKey = topicToPath[r.name] || "website";
-            pathScores[pathKey] = {
-              score: r.score,
-              correct_answers: r.correct_answers,
-              total_questions: r.total_questions,
-              answers: {}, // Details are only stored locally or empty
-            };
-          });
-          setQuizScores(pathScores);
+        if (!res.ok) {
+          console.error("Quiz results request failed:", res);
+          setQuizScores({});
+          return;
         }
+
+        const results = getResultsArray(res.data);
+        const pathScores = {};
+
+        results.forEach((result) => {
+          const pathKey = resolveResultPathKey(result, state.materials);
+          if (!pathKey) return;
+
+          pathScores[pathKey] = {
+            quiz_id: result.quiz_id || result.quizId || result.id,
+            category_id: result.category_id || result.categoryId,
+            score: Number(result.score || 0),
+            correct_answers: result.correct_answers || result.correctAnswers,
+            total_questions: result.total_questions || result.totalQuestions,
+            answers: result.answers || {},
+          };
+        });
+
+        setQuizScores(pathScores);
       } catch (err) {
         console.error("Error fetching quiz results:", err);
       } finally {
@@ -57,7 +124,7 @@ function NilaiContent() {
       }
     };
     fetchResults();
-  }, []);
+  }, [state.materials]);
 
   async function handleLogout() {
     await logout();
